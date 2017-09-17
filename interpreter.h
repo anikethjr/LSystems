@@ -11,7 +11,7 @@ class Interpreter
 {
     private:
         CFG grammar;
-        Canvas canvas;
+        Canvas *canvas;
         map<char,vector<pair<int,pair<double,Color> > > > operations_map;
     public:
         /*
@@ -20,8 +20,10 @@ class Interpreter
          * @param width The width of the canvas in pixels
          * @param height The height of the canvas in pixels
          */
-        Interpreter(char axiom[], int width, int height) : canvas(width,height), grammar(axiom)
-        { }
+        Interpreter(char axiom[], Canvas *canvas) : grammar(axiom)
+        {
+            this->canvas = canvas;
+        }
         /**
          * Used to declare a character used in the grammar and define its meaning i.e. define the operation to be performed when the constant is encountered
          * @param character The character whose meaning is being defined
@@ -45,10 +47,10 @@ class Interpreter
          */
         void drawLine(int &x, int &y, double inclination, int length, Color color)
         {
-            double rad = tan(inclination * PI / 180.0);
+            double rad = inclination * PI / 180.0;
             int end_x = x + round((double)length*cos(rad));
             int end_y = y + round((double)length*sin(rad));
-            canvas.drawLine(x,y,end_x,end_y,color);
+            (*canvas).drawLine(x,y,end_x,end_y,color);
             x = end_x;
             y = end_y;
         }
@@ -105,7 +107,7 @@ class Interpreter
                          * Draw a circle at the current coordinates
                          */
                     else if (operations_map[current[i]][j].first == 5)
-                        canvas.drawCircle(current_x, current_y, round(operations_map[current[i]][j].second.first), operations_map[current[i]][j].second.second);
+                        (*canvas).drawCircle(current_x, current_y, round(operations_map[current[i]][j].second.first), operations_map[current[i]][j].second.second);
                     else
                         cout << "Error 97: Unspecified constant found "<<current[i]<<" "<<operations_map[current[i]][j].first<<endl;
                 }
@@ -127,20 +129,9 @@ class Interpreter
         {
             grammar.createNewGeneration();
         }
-        /**
-         * Displays the generated image. Wrapper for the function provided by the Canvas class.
-         */
-        void display()
-        {
-            canvas.display();
-        }
         void getCurrent(char buf[])
         {
             grammar.getCurrent(buf);
-        }
-        void setOrigin(int x,int y)
-        {
-            canvas.setOrigin(x,y);
         }
 };
 #endif //INTERPRETER_H
