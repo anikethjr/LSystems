@@ -9,48 +9,54 @@ using namespace std;
 class CFG
 {
     private:
-        string zerorule;
-        string onerule;
-        string current;
+        map<char,char[1000000]> productions;
+        char current[1000000];
     public:
         /**
-         * Constructor which initializes various variables with their initial values
+         * Constructor which initializes the string with the axiom
          * @param axiom The string representing the first generation of the series
-         * @param zerorulerhs The string representing the RHS of the rule of the form 0 -> rhs
-         * @param onerulerhs The string representing the RHS of the rule of the form 1 -> rhs
          */
-        CFG(string axiom, string zerorulerhs, string onerulerhs)
+        CFG(char axiom[])
         {
-            current = axiom;
-            zerorule = zerorulerhs;
-            onerule = onerulerhs;
+            strcpy(current,axiom);
+        }
+        /*
+         * Function to add a production to the grammar
+         * @param symbol Represents the LHS symbol of the production
+         * @param rhs Represents the RHS of the production
+         */
+        void addProduction(char symbol,char rhs[])
+        {
+            strcpy(productions[symbol],rhs);
         }
         /**
-         * Generates the offspring of the current string by simultaneously replacing all the 0s and 1s by the RHS's of their respective rules.
+         * Generates the offspring of the current string by simultaneously replacing all the symbols by the RHS's of their respective rules.
          */
         void createNewGeneration()
         {
+            char new_string[1000000];
+            int pos = 0;
             for (long i = 0;current[i]!='\0'; ++i)
             {
-                //replace a 0 with its RHS
-                if(current[i]=='0')
+                if(productions.find(current[i])!=productions.end())
                 {
-                    current.replace(i,1,zerorule);
-                    i = i+zerorule.length()-1;
+                    for(long j=0;j<strlen(productions[current[i]]);++j)
+                    {
+                        new_string[pos++] = productions[current[i]][j];
+                    }
                 }
-                else if(current[i]=='1')
-                {
-                    current.replace(i,1,onerule);
-                    i = i+onerule.length()-1;
-                }
+                else
+                    new_string[pos++] = current[i];
             }
+            new_string[pos] = '\0';
+            strcpy(current,new_string);
         }
         /**
          * Returns the current generation string
          */
-        string getCurrent()
+        void getCurrent(char buffer[])
         {
-            return current;
+            strcpy(buffer,current);
         }
 };
 #endif //CFG_H
