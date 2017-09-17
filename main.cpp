@@ -6,7 +6,7 @@ int main()
     Canvas canvas(800,800);
     canvas.setOrigin(50,0);
     Interpreter pattern1("^[X]",&canvas);
-    pattern1.addProduction('X',"[−X][+X][+X][-X]+FX");
+    pattern1.addProduction('X',"[-X][+X][+X][-X]+FX");
     pattern1.addProduction('F',"FF");
     pattern1.addMeaning('X',0);
     Color color1(255,0,0);
@@ -27,7 +27,7 @@ int main()
 
     canvas.setOrigin(250,0);
     Interpreter pattern2("^[X]",&canvas);
-    pattern2.addProduction('X',"[−X][+X][+X][-X]+FX");
+    pattern2.addProduction('X',"[-X][+X][+X][-X]+FX");
     pattern2.addProduction('F',"FF");
     pattern2.addMeaning('X',0);
     Color color2(0,255,56);
