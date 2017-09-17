@@ -4,6 +4,7 @@
 using namespace std;
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
+#define PI 3.14159265
 
 class Interpreter
 {
@@ -26,9 +27,11 @@ class Interpreter
          * @param leftangle The angle through which we must turn while branching left
          * @param rightangle The angle through which we must turn while branching right
          * @param length The length of the line segment to be drawn in the forward direction when the command to draw a line is given
+         * @param radius The radius of the circle to be drawn
          */
         Interpreter(string axiom, string zerorulerhs, string onerulerhs, int width, int height, double leftangle, double rightangle, int length, int radius) : grammar(axiom,zerorulerhs,onerulerhs), canvas(width,height)
         {
+            cerr<<"jsdaj";
             this->leftangle = leftangle;
             this->rightangle = rightangle;
             this->length = length;
@@ -37,7 +40,7 @@ class Interpreter
         /**
          * Used to declare a character used in the grammar and define its meaning i.e. define the operation to be performed when the constant is encountered
          * @param character The character whose meaning is being defined
-         * @param operation The operation to be performed when the character is encountered. Can take any value from 1 to 5. 1 stands for draw forward, 2 stands for pushing current coordinates and inclination to stack, 3 stands for popping a set of coordinates and inclinations, 4 stands for turning left, 5 stands for turning right and 6 stands for drawing a circle.
+         * @param operation The operation to be performed when the character is encountered. Can take any value from 0 to 5. 0 stands for do nothing, 1 stands for draw forward, 2 stands for pushing current coordinates and inclination to stack, 3 stands for popping a set of coordinates and inclinations, 4 stands for turning left, 5 stands for turning right and 6 stands for drawing a circle.
          */
         void addMeaning(char character, int operation, Color* color = NULL)
         {
@@ -46,15 +49,20 @@ class Interpreter
                 operations_map[character].second = *color;
         }
         /**
-         * Function to draw a line of fixed length starting at the given coordinates and inclined at the given inclination.
+         * Function to draw a line of fixed length starting at the given coordinates and inclined at the given inclination. Updates the current coordinates with the end points computed.
          * @param x Denotes the x coordinate of the starting point
          * @param y Denotes the y coordinate of the starting point
          * @param inclination Denotes the inclination of the line
          * @param color Denotes the color of the line
          */
-        void drawLine(int x, int y, double inclination, Color color)
+        void drawLine(int &x, int &y, double inclination, Color color)
         {
-
+            double slope = tan(inclination * PI / 180.0);
+            int end_x = round((double)length/sqrt(1.0+pow(slope,2)));
+            int end_y = round((double)length*slope/sqrt(1.0+pow(slope,2)));
+            canvas.drawLine(x,y,end_x,end_y,color);
+            x = end_x;
+            y = end_y;
         }
         /**
          * Interprets the current string of the series and produces an interpretation i.e. image of it.
@@ -72,9 +80,14 @@ class Interpreter
             for (int i = 0; i < length; ++i)
             {
                 /*
+                 * Do nothing
+                 */
+                if(operations_map[current[i]].first==0)
+                    continue;
+                /*
                  * Draw a forward line at the current coordinates
                  */
-                if(operations_map[current[i]].first==1)
+                else if(operations_map[current[i]].first==1)
                     drawLine(current_x,current_y,inclination,operations_map[current[i]].second);
                 /*
                  * Push current coordinates and inclination to stack
@@ -113,6 +126,13 @@ class Interpreter
                 else
                     cout<<"Error 97: Unspecified constant found";
             }
+        }
+        /*
+         * Creates next generation string. Wrapper for the function provided by the CFG class.
+         */
+        void createNewGeneration()
+        {
+            grammar.createNewGeneration();
         }
         /**
          * Displays the generated image. Wrapper for the function provided by the Canvas class.
