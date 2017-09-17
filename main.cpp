@@ -3,13 +3,13 @@
 
 int main()
 {
-    Interpreter interpreter("X",800,800);
-    interpreter.setOrigin(100,700);
-    interpreter.addProduction('X',"F[−X][X]F[−X]+FX");
-    interpreter.addProduction('F',"FF");
+    Interpreter interpreter("X",1600,1600);
+    interpreter.setOrigin(50,200);
+    interpreter.addProduction('X',"XF-F+F-XF+F+XF-F+F-X");
+    interpreter.addProduction('F',"F");
     interpreter.addMeaning('X',0);
     Color color(255,0,0);
-    interpreter.addMeaning('F',1,5,&color);
+    interpreter.addMeaning('F',1,2,&color);
     interpreter.addMeaning('[',2);
     interpreter.addMeaning(']',3);
     interpreter.addMeaning('-',4,25);
