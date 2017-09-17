@@ -46,12 +46,19 @@ class Interpreter
                 operations_map[character].second = *color;
         }
         /**
-         * Interprets the current string of the series and produces an interpretation i.e. image of it.
+         * Function to draw a line of fixed length starting at the given coordinates and inclined at the given inclination.
+         * @param x Denotes the x coordinate of the starting point
+         * @param y Denotes the y coordinate of the starting point
+         * @param inclination Denotes the inclination of the line
+         * @param color Denotes the color of the line
          */
         void drawLine(int x, int y, double inclination, Color color)
         {
 
         }
+        /**
+         * Interprets the current string of the series and produces an interpretation i.e. image of it.
+         */
         void interpret()
         {
             string current = grammar.getCurrent();
