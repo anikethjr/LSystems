@@ -5,12 +5,12 @@
 int main()
 {
 
-    Canvas canvas(1200, 1200);
+    Canvas canvas(1400, 1400);
     //canvas.setBackgroundColor(Color(255, 255, 255));
     canvas.setOrigin(100, 100);
     Interpreter pattern1("^[X]",&canvas);
-    //pattern1.addProduction('X',"[-X][+X][+X][-X]+FX");
-    pattern1.addProduction('X', "[-/FX][+X][+X][-X]+/FX");
+    pattern1.addProduction('X', "[-X/][+X/][+X][-X/]+FX/");
+//    pattern1.addProduction('X', "[-/FX][+X][+X][-X]+/FX");
     pattern1.addProduction('F',"FF");
     pattern1.addMeaning('X',0);
     Color color1(255,0,0);
@@ -21,8 +21,8 @@ int main()
     pattern1.addMeaning('^',4,90);
     pattern1.addMeaning('-',4,25);
     pattern1.addMeaning('+',4,-25);
-    pattern1.addMeaning('/', 5, 5, &color2);
-    for (int i = 0; i < 6; i++) {
+    pattern1.addMeaning('/', 5, 2, &color2);
+    for (int i = 0; i < 7; i++) {
         pattern1.createNewGeneration();
         char buf[1000000];
         pattern1.getCurrent(buf);
@@ -51,7 +51,7 @@ int main()
     }
     pattern2.interpret();
 
-    canvas.setOrigin(770, 1200);
+    canvas.setOrigin(500, 100);
     Interpreter pattern3("^[X]", &canvas);
     pattern3.addProduction('X', "F[+X]-X");
     pattern3.addProduction('F', "FF");
@@ -61,7 +61,7 @@ int main()
     pattern3.addMeaning('F', 1, 5, &color4);
     pattern3.addMeaning('[', 2);
     pattern3.addMeaning(']', 3);
-    pattern3.addMeaning('^', 4, 220);
+    pattern3.addMeaning('^', 4, 90);
     pattern3.addMeaning('-', 4, 45);
     pattern3.addMeaning('+', 4, -45);
     pattern3.addMeaning('/', 5, 5, &color1);
