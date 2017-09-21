@@ -7,6 +7,7 @@ using namespace std;
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 #define PI 3.14159265
+int rand_flower_color = 0;
 
 class Interpreter {
 private:
@@ -114,6 +115,11 @@ public:
                 else if (operations_map[current[i]][j].first == 5)
                     (*canvas).drawCircle(current_x, current_y, round(operations_map[current[i]][j].second.first),
                                          operations_map[current[i]][j].second.second);
+                    /**
+                     *  Pen Up and take the cursor to a specified coordinate
+                     */
+//                else if (operations_map[current[i]][j].first == 6)
+
                 else
                     cout << "Error 97: Unspecified constant found " << current[i] << " "
                          << operations_map[current[i]][j].first << endl;
