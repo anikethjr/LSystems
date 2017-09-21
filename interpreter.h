@@ -7,7 +7,6 @@ using namespace std;
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 #define PI 3.14159265
-int rand_flower_color = 0;
 
 class Interpreter {
 private:
