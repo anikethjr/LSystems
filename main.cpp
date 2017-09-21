@@ -7,11 +7,11 @@ int main()
 
     Canvas canvas(1400, 1400);
     Color color1(255, 255, 0), color2(20, 123, 20), color3(0, 0, 0), color4(165, 42, 42);
-    Color col_flower(216, 41, 222), col_flower2(233, 130, 52);
+    Color col_flower(216, 41, 222), col_flower2(233, 130, 52), col_flower3(34, 100, 230);
 
 
     // Tree with flowers
-    canvas.setOrigin(400, 200);
+    canvas.setOrigin(200, 200);
     Interpreter pattern3("^[X]", &canvas);
     pattern3.addProduction('X', "F[+X/B]-X/B");
     pattern3.addProduction('F', "FF");
@@ -20,7 +20,7 @@ int main()
     pattern3.addMeaning('X', 0);
     pattern3.addMeaning('B', 0);
     pattern3.addMeaning('F', 1, 15, &color4);
-    pattern3.addMeaning('G', 1, 6, &color3);
+    pattern3.addMeaning('G', 1, 8, &color3);
     pattern3.addMeaning('[', 2);
     pattern3.addMeaning(']', 3);
     pattern3.addMeaning('^', 4, 90);
@@ -37,12 +37,14 @@ int main()
     }
     pattern3.interpret();
 
-    // A leaf
+    // Test flower
     canvas.setOrigin(100, 400);
     Interpreter pattern5("X", &canvas);
     pattern5.addProduction('X', "FXL");  // L is for leaf
     pattern5.addProduction('F', "FF");
-    pattern5.addProduction('L', "[(G))G))G))G]"); // G is forward for leaf
+//    [(G++G++G][(--G--G--G]
+//    [--G++G++G][++G--G--G]
+    pattern5.addProduction('L', "[(G++G++G][(--G--G--G][--G++G++G][++G--G--G]"); // G is forward for leaf
     pattern5.addMeaning('X', 0);
     pattern5.addMeaning('F', 1, 15, &color4);
     pattern5.addMeaning('G', 1, 15, &color1);
@@ -51,8 +53,8 @@ int main()
     pattern5.addMeaning('^', 4, 90);
     pattern5.addMeaning('-', 4, 60);
     pattern5.addMeaning('+', 4, -60);
-    pattern5.addMeaning('(', 4, 45);
-    pattern5.addMeaning(')', 4, -45);
+    pattern5.addMeaning('(', 4, 30);
+    pattern5.addMeaning(')', 4, -30);
     for (int i = 0; i < 2; i++) {
         pattern5.createNewGeneration();
         char buf[1000000];
@@ -61,15 +63,16 @@ int main()
     }
     pattern5.interpret();
 
-    // A tree with leafs
+    // A tree with rhombus flowers
     canvas.setOrigin(500, 0);
     Interpreter pattern6("^[X]", &canvas);
     pattern6.addProduction('X', "F[+XL]-XL");  // L is for leaf
     pattern6.addProduction('F', "FF");
-    pattern6.addProduction('L', "[(G))G))G))G]"); // G is forward for leaf
+//    pattern6.addProduction('L', "[(G))G))G))G]"); // G is forward for leaf
+    pattern6.addProduction('L', "[(G(G(((G(G][)G)G)))G)G][((G(G(((G(G][))G)G)))G)G]");
     pattern6.addMeaning('X', 0);
     pattern6.addMeaning('F', 1, 15, &color4);
-    pattern6.addMeaning('G', 1, 12, &color1);
+    pattern6.addMeaning('G', 1, 10, &col_flower3);
     pattern6.addMeaning('[', 2);
     pattern6.addMeaning(']', 3);
     pattern6.addMeaning('^', 4, 90);
@@ -84,6 +87,32 @@ int main()
         cout << buf << endl;
     }
     pattern6.interpret();
+
+    // A tree with triangular flowers
+    canvas.setOrigin(200, -800);
+    Interpreter pattern7("^[X]", &canvas);
+    pattern7.addProduction('X', "F[+XL]-XL");  // L is for leaf
+    pattern7.addProduction('F', "FF");
+//    pattern6.addProduction('L', "[(G))G))G))G]"); // G is forward for leaf
+    pattern7.addProduction('L', "[(G++G++G][(--G--G--G][--G++G++G][++G--G--G]");
+    pattern7.addMeaning('X', 0);
+    pattern7.addMeaning('F', 1, 15, &color4);
+    pattern7.addMeaning('G', 1, 10, &color1);
+    pattern7.addMeaning('[', 2);
+    pattern7.addMeaning(']', 3);
+    pattern7.addMeaning('^', 4, 90);
+    pattern7.addMeaning('-', 4, 60);
+    pattern7.addMeaning('+', 4, -60);
+    pattern7.addMeaning('(', 4, 30);
+    pattern7.addMeaning(')', 4, -30);
+    for (int i = 0; i < 6; i++) {
+        pattern7.createNewGeneration();
+        char buf[1000000];
+        pattern7.getCurrent(buf);
+        cout << buf << endl;
+    }
+    pattern7.interpret();
+
 
 
     canvas.display();
