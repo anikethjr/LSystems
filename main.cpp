@@ -1,117 +1,267 @@
+#include <string>
 #include<bits/stdc++.h>
 #include "interpreter.h"
-#include <string>
 
-int main()
-{
+class LongTree {
+public:
+    LongTree(Color &colorBranch, Color &colorFlower, int x, int y, Canvas &canvas, int alignment, int generation = 6) {
+        canvas.setOrigin(x, y);
+        Interpreter pattern("^[X]", &canvas);
+        pattern.addProduction('F', "FF");
+        pattern.addMeaning('X', 0);
+        pattern.addMeaning('F', 1, 5, &colorBranch);
+        pattern.addMeaning('[', 2);
+        pattern.addMeaning(']', 3);
+        pattern.addMeaning('^', 4, 90);
+        pattern.addMeaning('-', 4, 25);
+        pattern.addMeaning('+', 4, -25);
+        pattern.addMeaning('P', 5, 2, &colorFlower);
+        pattern.addMeaning('G', 1, 5, &colorFlower);
+        pattern.addProduction('L', "[(G(G(((G(G][)G)G)))G)G][((G(G(((G(G][))G)G)))G)G]");
+        pattern.addMeaning('(', 4, 45);
+        pattern.addMeaning(')', 4, -45);
+        if (alignment == 1) // left alignment
+            pattern.addProduction('X', "F-[XL]+F+[XL]-XL");
+        else
+            pattern.addProduction('X', "F+[XP]-F-[XP]+XP");
 
-    Canvas canvas(1400, 1400);
-    Color color1(255, 255, 0), color2(20, 123, 20), color3(0, 0, 0), color4(165, 42, 42);
-    Color col_flower(216, 41, 222), col_flower2(233, 130, 52), col_flower3(34, 100, 230);
-
-
-    // Tree with flowers
-    canvas.setOrigin(200, 200);
-    Interpreter pattern3("^[X]", &canvas);
-    pattern3.addProduction('X', "F[+X/B]-X/B");
-    pattern3.addProduction('F', "FF");
-//    pattern3.addProduction('L', "/B");
-    pattern3.addProduction('B', "[G/][(G/)][((G/))][)G/(][))G/((]"); // G forward with black color
-    pattern3.addMeaning('X', 0);
-    pattern3.addMeaning('B', 0);
-    pattern3.addMeaning('F', 1, 15, &color4);
-    pattern3.addMeaning('G', 1, 8, &color3);
-    pattern3.addMeaning('[', 2);
-    pattern3.addMeaning(']', 3);
-    pattern3.addMeaning('^', 4, 90);
-    pattern3.addMeaning('-', 4, 60);
-    pattern3.addMeaning('+', 4, -60);
-    pattern3.addMeaning('/', 5, 3, &col_flower);
-    pattern3.addMeaning('(', 4, 72);
-    pattern3.addMeaning(')', 4, -72);
-    for (int i = 0; i < 6; i++) {
-        pattern3.createNewGeneration();
-        char buf[1000000];
-        pattern3.getCurrent(buf);
-        cout << buf << endl;
+        for (int i = 0; i < generation; i++) {
+            pattern.createNewGeneration();
+            char buf[1000000];
+            pattern.getCurrent(buf);
+        }
+        pattern.interpret();
+        canvas.setOrigin(-x, -y);
     }
-    pattern3.interpret();
+};
 
-    // Test flower
-    canvas.setOrigin(100, 400);
-    Interpreter pattern5("X", &canvas);
-    pattern5.addProduction('X', "FXL");  // L is for leaf
-    pattern5.addProduction('F', "FF");
-//    [(G++G++G][(--G--G--G]
-//    [--G++G++G][++G--G--G]
-    pattern5.addProduction('L', "[(G++G++G][(--G--G--G][--G++G++G][++G--G--G]"); // G is forward for leaf
-    pattern5.addMeaning('X', 0);
-    pattern5.addMeaning('F', 1, 15, &color4);
-    pattern5.addMeaning('G', 1, 15, &color1);
-    pattern5.addMeaning('[', 2);
-    pattern5.addMeaning(']', 3);
-    pattern5.addMeaning('^', 4, 90);
-    pattern5.addMeaning('-', 4, 60);
-    pattern5.addMeaning('+', 4, -60);
-    pattern5.addMeaning('(', 4, 30);
-    pattern5.addMeaning(')', 4, -30);
-    for (int i = 0; i < 2; i++) {
-        pattern5.createNewGeneration();
-        char buf[1000000];
-        pattern5.getCurrent(buf);
-        cout << buf << endl;
-    }
-    pattern5.interpret();
+class Shrub {
+public:
+    Shrub(Color &colorBranch, int x, int y, Canvas &canvas, int alignment, int generation = 6) {
+        canvas.setOrigin(x, y);
+        Interpreter pattern("^[X]", &canvas);
+        pattern.addProduction('F', "FF");
+        pattern.addMeaning('X', 0);
+        pattern.addMeaning('F', 1, 4, &colorBranch);
+        pattern.addMeaning('[', 2);
+        pattern.addMeaning(']', 3);
+        pattern.addMeaning('^', 4, 90);
+        pattern.addMeaning('-', 4, 25);
+        pattern.addMeaning('+', 4, -25);
+        if (alignment == 0) // left alignment
+            pattern.addProduction('X', "[-X][+X][+X][-X]+FX");
+        else if (alignment == 1)  // right alignment
+            pattern.addProduction('X', "[+X][-X][-X][+X]-FX");
+        else // symmetrical
+            pattern.addProduction('X', "[-FX][+X][+X][-X]+FX");
 
-    // A tree with rhombus flowers
-    canvas.setOrigin(500, 0);
-    Interpreter pattern6("^[X]", &canvas);
-    pattern6.addProduction('X', "F[+XL]-XL");  // L is for leaf
-    pattern6.addProduction('F', "FF");
-//    pattern6.addProduction('L', "[(G))G))G))G]"); // G is forward for leaf
-    pattern6.addProduction('L', "[(G(G(((G(G][)G)G)))G)G][((G(G(((G(G][))G)G)))G)G]");
-    pattern6.addMeaning('X', 0);
-    pattern6.addMeaning('F', 1, 15, &color4);
-    pattern6.addMeaning('G', 1, 10, &col_flower3);
-    pattern6.addMeaning('[', 2);
-    pattern6.addMeaning(']', 3);
-    pattern6.addMeaning('^', 4, 90);
-    pattern6.addMeaning('-', 4, 60);
-    pattern6.addMeaning('+', 4, -60);
-    pattern6.addMeaning('(', 4, 45);
-    pattern6.addMeaning(')', 4, -45);
-    for (int i = 0; i < 6; i++) {
-        pattern6.createNewGeneration();
-        char buf[1000000];
-        pattern6.getCurrent(buf);
-        cout << buf << endl;
+        for (int i = 0; i < generation; i++) {
+            pattern.createNewGeneration();
+            char buf[1000000];
+            pattern.getCurrent(buf);
+        }
+        pattern.interpret();
+        canvas.setOrigin(-x, -y);
     }
-    pattern6.interpret();
 
-    // A tree with triangular flowers
-    canvas.setOrigin(200, -800);
-    Interpreter pattern7("^[X]", &canvas);
-    pattern7.addProduction('X', "F[+XL]-XL");  // L is for leaf
-    pattern7.addProduction('F', "FF");
-//    pattern6.addProduction('L', "[(G))G))G))G]"); // G is forward for leaf
-    pattern7.addProduction('L', "[(G++G++G][(--G--G--G][--G++G++G][++G--G--G]");
-    pattern7.addMeaning('X', 0);
-    pattern7.addMeaning('F', 1, 15, &color4);
-    pattern7.addMeaning('G', 1, 10, &color1);
-    pattern7.addMeaning('[', 2);
-    pattern7.addMeaning(']', 3);
-    pattern7.addMeaning('^', 4, 90);
-    pattern7.addMeaning('-', 4, 60);
-    pattern7.addMeaning('+', 4, -60);
-    pattern7.addMeaning('(', 4, 30);
-    pattern7.addMeaning(')', 4, -30);
-    for (int i = 0; i < 6; i++) {
-        pattern7.createNewGeneration();
-        char buf[1000000];
-        pattern7.getCurrent(buf);
-        cout << buf << endl;
+};
+
+using namespace std;
+
+int main() {
+    //Starry Night by KAT Systems :P
+    Canvas canvas(1300, 700);
+    Color brown(165, 42, 42);
+    Color pink(255, 192, 170);
+    Color green(98, 204, 28);
+    Color yellow(255, 170, 34);
+    Color gore(255, 255, 255);
+    Color kaala(0, 0, 0);
+
+
+    for (int i = 1; i <= 200; i++)
+        canvas.drawCircle(500, 450, i, gore);
+
+    for (int i = 0; i < 30; i++) {
+        int x = rand() % 400 + 50;
+        int y = rand() % 100 + 0;
+        int randomnum = rand() % 2;
+        int randomnum2 = rand() % 2;
+        if (randomnum == 0)
+            LongTree longTree1(brown, pink, x, y, canvas, randomnum, 6 - randomnum2);
+        else
+            LongTree longTree2(brown, green, x, y, canvas, randomnum, 6 - randomnum2);
     }
-    pattern7.interpret();
+
+    for (int i = 0; i < 30; i++) {
+        int x = rand() % 400 + 900;
+        int y = rand() % 100 + 0;
+        int randomnum = rand() % 2;
+        int randomnum2 = rand() % 2;
+        if (randomnum == 0)
+            LongTree longTree(brown, pink, x, y, canvas, randomnum, 6 - randomnum2);
+        else
+            LongTree longTree3(brown, green, x, y, canvas, randomnum, 6 - randomnum2);
+    }
+
+    for (int i = 1; i <= 100; i++) {
+        Color gradient(10, 10, 142 * i * 0.01);
+        canvas.drawLine(0, i, 1300, i, gradient);
+    }
+    int x = -10;
+    int y = 0;
+    /*for(int i=0;i<20;i++, x+=4, y+=3)
+    {
+        //int x = rand()%300 - 30;
+        //int y = i;
+        int randomnum = rand()%2;
+        if(randomnum==0)
+        {
+            Shrub shrubl(green, x, y, canvas, rand() % 2, 5 - rand() % 2);
+            Shrub shrubr(yellow,1200-x,y,canvas,rand()%2,5-rand()%2);
+        }
+        else
+        {
+            Shrub shrubl(yellow, x, y, canvas, rand() % 2, 5 - rand() % 2);
+            Shrub shrubr(green, 1200 - x, y, canvas, rand() % 2, 5 - rand() % 2);
+        }
+    }*/
+
+
+
+
+
+
+//    A flower
+//    canvas.setOrigin(800, 100);
+//    Interpreter pattern4("^[X]", &canvas);
+//    pattern4.addProduction('X', "FXL");  // L is the production for flower
+//    pattern4.addProduction('F', "FF");
+//    pattern4.addProduction('L', "/B");
+//    pattern4.addProduction('B', "[G/][(G/)][((G/))][)G/][))G/((]"); // G forward with black color
+//    pattern4.addMeaning('X', 0);
+//    pattern4.addMeaning('B', 0);
+//    pattern4.addMeaning('F', 1, 5, &color4);
+//    pattern4.addMeaning('G', 1, 12, &color3);
+//    pattern4.addMeaning('[', 2);
+//    pattern4.addMeaning(']', 3);
+//    pattern4.addMeaning('^', 4, 90);
+//    pattern4.addMeaning('-', 4, 60);
+//    pattern4.addMeaning('+', 4, -60);
+//    pattern3.addMeaning('T', 5, 6, &col_flower2);
+//    pattern4.addMeaning('/', 5, 6, &color1);
+//    pattern4.addMeaning('(', 4, 72);
+//    pattern4.addMeaning(')', 4, -72);
+//    for (int i = 0; i < 6; i++) {
+//        pattern4.createNewGeneration();
+//        char buf[1000000];
+//        pattern4.getCurrent(buf);
+//        cout << buf << endl;
+//    }
+//    pattern4.interpret();
+//
+//    // Tree with flowers
+//    canvas.setOrigin(200, 200);
+//    Interpreter pattern3("^[X]", &canvas);
+//    pattern3.addProduction('X', "F[+X/B]-X/B");
+//    pattern3.addProduction('F', "FF");
+////    pattern3.addProduction('L', "/B");
+//    pattern3.addProduction('B', "[G/][(G/)][((G/))][)G/(][))G/((]"); // G forward with black color
+//    pattern3.addMeaning('X', 0);
+//    pattern3.addMeaning('B', 0);
+//    pattern3.addMeaning('F', 1, 15, &color4);
+//    pattern3.addMeaning('G', 1, 8, &color3);
+//    pattern3.addMeaning('[', 2);
+//    pattern3.addMeaning(']', 3);
+//    pattern3.addMeaning('^', 4, 90);
+//    pattern3.addMeaning('-', 4, 60);
+//    pattern3.addMeaning('+', 4, -60);
+//    pattern3.addMeaning('/', 5, 3, &col_flower);
+//    pattern3.addMeaning('(', 4, 72);
+//    pattern3.addMeaning(')', 4, -72);
+//    for (int i = 0; i < 6; i++) {
+//        pattern3.createNewGeneration();
+//        char buf[1000000];
+//        pattern3.getCurrent(buf);
+//        cout << buf << endl;
+//    }
+//    pattern3.interpret();
+//
+//    // Test flower
+//    canvas.setOrigin(100, 400);
+//    Interpreter pattern5("X", &canvas);
+//    pattern5.addProduction('X', "FXL");  // L is for leaf
+//    pattern5.addProduction('F', "FF");
+////    [(G++G++G][(--G--G--G]
+////    [--G++G++G][++G--G--G]
+//    pattern5.addProduction('L', "[(G++G++G][(--G--G--G][--G++G++G][++G--G--G]"); // G is forward for leaf
+//    pattern5.addMeaning('X', 0);
+//    pattern5.addMeaning('F', 1, 15, &color4);
+//    pattern5.addMeaning('G', 1, 15, &color1);
+//    pattern5.addMeaning('[', 2);
+//    pattern5.addMeaning(']', 3);
+//    pattern5.addMeaning('^', 4, 90);
+//    pattern5.addMeaning('-', 4, 60);
+//    pattern5.addMeaning('+', 4, -60);
+//    pattern5.addMeaning('(', 4, 30);
+//    pattern5.addMeaning(')', 4, -30);
+//    for (int i = 0; i < 2; i++) {
+//        pattern5.createNewGeneration();
+//        char buf[1000000];
+//        pattern5.getCurrent(buf);
+//        cout << buf << endl;
+//    }
+//    pattern5.interpret();
+//
+//    // A tree with rhombus flowers
+//    canvas.setOrigin(500, 0);
+//    Interpreter pattern6("^[X]", &canvas);
+//    pattern6.addProduction('X', "F[+XL]-XL");  // L is for leaf
+//    pattern6.addProduction('F', "FF");
+////    pattern6.addProduction('L', "[(G))G))G))G]"); // G is forward for leaf
+//    pattern6.addProduction('L', "[(G(G(((G(G][)G)G)))G)G][((G(G(((G(G][))G)G)))G)G]");
+//    pattern6.addMeaning('X', 0);
+//    pattern6.addMeaning('F', 1, 15, &color4);
+//    pattern6.addMeaning('G', 1, 10, &col_flower3);
+//    pattern6.addMeaning('[', 2);
+//    pattern6.addMeaning(']', 3);
+//    pattern6.addMeaning('^', 4, 90);
+//    pattern6.addMeaning('-', 4, 60);
+//    pattern6.addMeaning('+', 4, -60);
+//    pattern6.addMeaning('(', 4, 45);
+//    pattern6.addMeaning(')', 4, -45);
+//    for (int i = 0; i < 6; i++) {
+//        pattern6.createNewGeneration();
+//        char buf[1000000];
+//        pattern6.getCurrent(buf);
+//        cout << buf << endl;
+//    }
+//    pattern6.interpret();
+//
+//    // A tree with triangular flowers
+//    canvas.setOrigin(200, -800);
+//    Interpreter pattern7("^[X]", &canvas);
+//    pattern7.addProduction('X', "F[+XL]-XL");  // L is for leaf
+//    pattern7.addProduction('F', "FF");
+////    pattern6.addProduction('L', "[(G))G))G))G]"); // G is forward for leaf
+//    pattern7.addProduction('L', "[(G++G++G][(--G--G--G][--G++G++G][++G--G--G]");
+//    pattern7.addMeaning('X', 0);
+//    pattern7.addMeaning('F', 1, 15, &color4);
+//    pattern7.addMeaning('G', 1, 10, &color1);
+//    pattern7.addMeaning('[', 2);
+//    pattern7.addMeaning(']', 3);
+//    pattern7.addMeaning('^', 4, 90);
+//    pattern7.addMeaning('-', 4, 60);
+//    pattern7.addMeaning('+', 4, -60);
+//    pattern7.addMeaning('(', 4, 30);
+//    pattern7.addMeaning(')', 4, -30);
+//    for (int i = 0; i < 6; i++) {
+//        pattern7.createNewGeneration();
+//        char buf[1000000];
+//        pattern7.getCurrent(buf);
+//        cout << buf << endl;
+//    }
+//    pattern7.interpret();
 
 
 
