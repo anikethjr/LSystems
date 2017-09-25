@@ -109,20 +109,16 @@ public:
 
 class TreeA {
 public:
-    TreeA(Color &colorBranch, Color &colorFlower, int x, int y, Canvas &canvas, int alignment, int generations = 5) {
+    TreeA(Color &colorBranch, int x, int y, Canvas &canvas, int generations = 5) {
         canvas.setOrigin(x, y);
         Interpreter pattern("^[F]", &canvas);
         pattern.addProduction('F', "[+F]F[-F]F");
-        pattern.addMeaning('F', 1, 5, &colorBranch);
+        pattern.addMeaning('F', 1, 6, &colorBranch);
         pattern.addMeaning('[', 2);
         pattern.addMeaning(']', 3);
         pattern.addMeaning('^', 4, 90);
         pattern.addMeaning('-', 4, 25.7);
         pattern.addMeaning('+', 4, -25.7);
-        pattern.addMeaning('G', 1, 5, &colorFlower);
-        pattern.addProduction('L', "[(G(G(((G(G][)G)G)))G)G][((G(G(((G(G][))G)G)))G)G]");
-        pattern.addMeaning('(', 4, 45);
-        pattern.addMeaning(')', 4, -45);
 
         for (int i = 0; i < generations; i++) {
             pattern.createNewGeneration();
@@ -134,6 +130,107 @@ public:
     }
 
 };
+
+class TreeB {
+public:
+    TreeB(Color &colorBranch, int x, int y, Canvas &canvas, int generations = 5) {
+        canvas.setOrigin(x, y);
+        Interpreter pattern("^[F]", &canvas);
+        pattern.addProduction('F', "F[+F]F[-F]F");
+        pattern.addMeaning('F', 1, 6, &colorBranch);
+        pattern.addMeaning('[', 2);
+        pattern.addMeaning(']', 3);
+        pattern.addMeaning('^', 4, 90);
+        pattern.addMeaning('-', 4, 20);
+        pattern.addMeaning('+', 4, -20);
+
+        for (int i = 0; i < generations; i++) {
+            pattern.createNewGeneration();
+            char buf[1000000];
+            pattern.getCurrent(buf);
+        }
+        pattern.interpret();
+        canvas.setOrigin(-x, -y);
+    }
+
+};
+
+class TreeC {
+public:
+    TreeC(Color &colorBranch, int x, int y, Canvas &canvas, int generations = 4) {
+        canvas.setOrigin(x, y);
+        Interpreter pattern("^[F]", &canvas);
+        pattern.addProduction('F', "FF-[-F+F+F]+[+F-F-F]");
+        pattern.addMeaning('F', 1, 5, &colorBranch);
+        pattern.addMeaning('[', 2);
+        pattern.addMeaning(']', 3);
+        pattern.addMeaning('^', 4, 90);
+        pattern.addMeaning('-', 4, 22.5);
+        pattern.addMeaning('+', 4, -22.5);
+
+        for (int i = 0; i < generations; i++) {
+            pattern.createNewGeneration();
+            char buf[1000000];
+            pattern.getCurrent(buf);
+        }
+        pattern.interpret();
+        canvas.setOrigin(-x, -y);
+    }
+
+};
+
+class TreeD {
+public:
+    TreeD(Color &colorBranch, Color &colorFlower, int x, int y, Canvas &canvas, int generations = 7) {
+        canvas.setOrigin(x, y);
+        Interpreter pattern("^[X]", &canvas);
+        pattern.addProduction('X', "F[+X][-X]FX");
+        pattern.addProduction('F', "FF");
+        pattern.addMeaning('P', 5, 2, &colorFlower);
+        pattern.addMeaning('F', 1, 3, &colorBranch);
+        pattern.addMeaning('[', 2);
+        pattern.addMeaning(']', 3);
+        pattern.addMeaning('^', 4, 90);
+        pattern.addMeaning('-', 4, 25.7);
+        pattern.addMeaning('+', 4, -25.7);
+
+        for (int i = 0; i < generations; i++) {
+            pattern.createNewGeneration();
+            char buf[1000000];
+            pattern.getCurrent(buf);
+        }
+        pattern.interpret();
+        canvas.setOrigin(-x, -y);
+    }
+
+};
+
+class TreeE {
+public:
+    TreeE(Color &colorBranch, Color &colorFlower, int x, int y, Canvas &canvas, int generations = 5) {
+        canvas.setOrigin(x, y);
+        Interpreter pattern("^[X]", &canvas);
+        pattern.addProduction('X', "F-[[X]+X]+F[+FX]-X");
+        pattern.addProduction('F', "FF");
+        pattern.addMeaning('P', 5, 2, &colorFlower);
+        pattern.addMeaning('F', 1, 3, &colorBranch);
+        pattern.addMeaning('[', 2);
+        pattern.addMeaning(']', 3);
+        pattern.addMeaning('^', 4, 90);
+        pattern.addMeaning('-', 4, 25.7);
+        pattern.addMeaning('+', 4, -25.7);
+
+        for (int i = 0; i < generations; i++) {
+            pattern.createNewGeneration();
+            char buf[1000000];
+            pattern.getCurrent(buf);
+        }
+        pattern.interpret();
+        canvas.setOrigin(-x, -y);
+    }
+
+};
+
 
 using namespace std;
 
@@ -197,35 +294,44 @@ int main() {
     }*/
 
 //    OctagonStar octstar(gore, 100,100,canvas,3);
-    SnowFlake(gore, 100, 100, canvas);
+//    SnowFlake(gore, 100, 100, canvas);
+    TreeA t1(brown, 100, 300, canvas);
+    TreeB t2(brown, 400, 300, canvas);
+    TreeC t3(brown, 700, 300, canvas);
+    TreeD t4(brown, pink, 100, 0, canvas, 5);
+    TreeE t5(brown, pink, 400, 0, canvas);
+
+
+
+
 
 // star test
-    canvas.setOrigin(500, 100);
-    Interpreter pattern4("^[F+F+F]", &canvas);
-//    pattern4.addProduction('X', "FXL");  // L is the production for flower
-    pattern4.addProduction('F', "F-F+F-F");
-    pattern4.addProduction('L', "/B");
-    pattern4.addProduction('B', "[G/][(G/)][((G/))][)G/][))G/((]"); // G forward with black color
-    pattern4.addMeaning('X', 0);
-    pattern4.addMeaning('B', 0);
-    pattern4.addMeaning('F', 1, 4, &gore);
-//    pattern4.addMeaning('G', 1, 12, &color3);
-    pattern4.addMeaning('[', 2);
-    pattern4.addMeaning(']', 3);
-    pattern4.addMeaning('^', 4, 90);
-    pattern4.addMeaning('-', 4, 60);
-    pattern4.addMeaning('+', 4, -120);
-//    pattern4.addMeaning('T', 5, 6, &col_flower2);
-//    pattern4.addMeaning('/', 5, 6, &color1);
-    pattern4.addMeaning('(', 4, 72);
-    pattern4.addMeaning(')', 4, -72);
-    for (int i = 0; i < 4; i++) {
-        pattern4.createNewGeneration();
-        char buf[1000000];
-        pattern4.getCurrent(buf);
-        cout << buf << endl;
-    }
-    pattern4.interpret();
+//    canvas.setOrigin(500, 100);
+//    Interpreter pattern4("^[F+F+F]", &canvas);
+////    pattern4.addProduction('X', "FXL");  // L is the production for flower
+//    pattern4.addProduction('F', "F-F+F-F");
+//    pattern4.addProduction('L', "/B");
+//    pattern4.addProduction('B', "[G/][(G/)][((G/))][)G/][))G/((]"); // G forward with black color
+//    pattern4.addMeaning('X', 0);
+//    pattern4.addMeaning('B', 0);
+//    pattern4.addMeaning('F', 1, 4, &gore);
+////    pattern4.addMeaning('G', 1, 12, &color3);
+//    pattern4.addMeaning('[', 2);
+//    pattern4.addMeaning(']', 3);
+//    pattern4.addMeaning('^', 4, 90);
+//    pattern4.addMeaning('-', 4, 60);
+//    pattern4.addMeaning('+', 4, -120);
+////    pattern4.addMeaning('T', 5, 6, &col_flower2);
+////    pattern4.addMeaning('/', 5, 6, &color1);
+//    pattern4.addMeaning('(', 4, 72);
+//    pattern4.addMeaning(')', 4, -72);
+//    for (int i = 0; i < 4; i++) {
+//        pattern4.createNewGeneration();
+//        char buf[1000000];
+//        pattern4.getCurrent(buf);
+//        cout << buf << endl;
+//    }
+//    pattern4.interpret();
 
 
 
