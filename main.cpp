@@ -89,11 +89,11 @@ public:
 
 class SnowFlake {
 public:
-    SnowFlake(Color &snowFlakeColor, int x, int y, Canvas &canvas, int generations = 3) {
+    SnowFlake(Color &snowFlakeColor, int x, int y, Canvas &canvas, int generations = 1) {
         canvas.setOrigin(x, y);
         Interpreter pattern("^[F+F+F]", &canvas);
         pattern.addProduction('F', "F-F+F-F");
-        pattern.addMeaning('F', 1, 4, &snowFlakeColor);
+        pattern.addMeaning('F', 1, 2.5, &snowFlakeColor);
         pattern.addMeaning('^', 4, 90);
         pattern.addMeaning('-', 4, 60);
         pattern.addMeaning('+', 4, -120);
@@ -181,18 +181,23 @@ public:
 
 class TreeD {
 public:
-    TreeD(Color &colorBranch, Color &colorFlower, int x, int y, Canvas &canvas, int generations = 7) {
+    TreeD(Color &colorBranch, Color &colorFlower, int x, int y, Canvas &canvas, int generations = 5) {
         canvas.setOrigin(x, y);
-        Interpreter pattern("^[X]", &canvas);
-        pattern.addProduction('X', "F[+X][-X]FX");
+        Interpreter pattern("^X", &canvas);
+        pattern.addProduction('X', "F[+XL][-XL]FX");
         pattern.addProduction('F', "FF");
-        pattern.addMeaning('P', 5, 2, &colorFlower);
+        pattern.addMeaning('X', 0);
         pattern.addMeaning('F', 1, 3, &colorBranch);
+        pattern.addMeaning('P', 5, 2, &colorFlower);
         pattern.addMeaning('[', 2);
         pattern.addMeaning(']', 3);
         pattern.addMeaning('^', 4, 90);
         pattern.addMeaning('-', 4, 25.7);
         pattern.addMeaning('+', 4, -25.7);
+        pattern.addMeaning('G', 1, 3, &colorFlower);
+        pattern.addProduction('L', "[(G(G(((G(G][)G)G)))G)G][((G(G(((G(G][))G)G)))G)G]");
+        pattern.addMeaning('(', 4, 45);
+        pattern.addMeaning(')', 4, -45);
 
         for (int i = 0; i < generations; i++) {
             pattern.createNewGeneration();
@@ -235,71 +240,107 @@ public:
 using namespace std;
 
 int main() {
-    //Starry Night by KAT Systems :P
-    Canvas canvas(1300, 700);
+    //Winter by KAT Systems :P
+    Canvas canvas(1368, 700);
     Color brown(165, 42, 42);
     Color pink(255, 192, 170);
     Color green(98, 204, 28);
     Color yellow(255, 170, 34);
+    Color darkbrown(107, 47, 47);
+    Color darkgreen(23, 73, 17);
     Color gore(255, 255, 255);
+    Color wintersnow(240, 247, 239);
     Color kaala(0, 0, 0);
+    Color grey(130, 130, 130);
 
+    srand(15);
 
-//    for (int i = 1; i <= 200; i++)
-//        canvas.drawCircle(500, 450, i, gore);
-//
-//    for (int i = 0; i < 30; i++) {
-//        int x = rand() % 400 + 50;
-//        int y = rand() % 100 + 0;
-//        int randomnum = rand() % 2;
-//        int randomnum2 = rand() % 2;
-//        if (randomnum == 0)
-//            LongTree longTree1(brown, pink, x, y, canvas, randomnum, 6 - randomnum2);
-//        else
-//            LongTree longTree2(brown, green, x, y, canvas, randomnum, 6 - randomnum2);
-//    }
-//
-//    for (int i = 0; i < 30; i++) {
-//        int x = rand() % 400 + 900;
-//        int y = rand() % 100 + 0;
-//        int randomnum = rand() % 2;
-//        int randomnum2 = rand() % 2;
-//        if (randomnum == 0)
-//            LongTree longTree(brown, pink, x, y, canvas, randomnum, 6 - randomnum2);
-//        else
-//            LongTree longTree3(brown, green, x, y, canvas, randomnum, 6 - randomnum2);
-//    }
-//
-//    for (int i = 1; i <= 100; i++) {
-//        Color gradient(10, 10, 142 * i * 0.01);
-//        canvas.drawLine(0, i, 1300, i, gradient);
-//    }
-//    int x = -10;
-//    int y = 0;
-    /*for(int i=0;i<20;i++, x+=4, y+=3)
+    for (int i = 300; i >= 0; i--)
     {
-        //int x = rand()%300 - 30;
-        //int y = i;
-        int randomnum = rand()%2;
-        if(randomnum==0)
-        {
-            Shrub shrubl(green, x, y, canvas, rand() % 2, 5 - rand() % 2);
-            Shrub shrubr(yellow,1200-x,y,canvas,rand()%2,5-rand()%2);
-        }
-        else
-        {
-            Shrub shrubl(yellow, x, y, canvas, rand() % 2, 5 - rand() % 2);
-            Shrub shrubr(green, 1200 - x, y, canvas, rand() % 2, 5 - rand() % 2);
-        }
-    }*/
+        canvas.drawLine(0, i, 1368, i, wintersnow);
+    }
+
+    for (int i = 0; i < 13; i++) {
+        int y = rand() % 300 + 400;
+        int x = rand() % 1368;
+        SnowFlake sn(gore, x, y, canvas);
+    }
+
+    int x = 500;
+    int y = 0;
+    for (int i = 0; i < 13; i++, x += 40, y += 20) {
+//        TreeD t1(brown, gore, x, y, canvas);
+        TreeD t2(darkbrown, darkgreen, x, y, canvas);
+    }
+
+    int x1 = 500, y1 = 0;
+    int x2 = 1020, y2 = 300;
+    for (int i = 0; i < 520; i++, x1++, x2++) {
+        canvas.drawLine(x1, y1, x2, y2, grey);
+//
+    }
+
+    x = 1020;
+    y = 0;
+    for (int i = 0; i < 13; i++, x += 50, y += 20) {
+//        TreeD t1(brown, gore, x, y, canvas);
+        TreeD t2(darkbrown, darkgreen, x, y, canvas);
+    }
+
+
+
+
+
+
+//    // star test
+//    canvas.setOrigin(500, 100);
+//    Interpreter pattern4("[^F]", &canvas);
+////    pattern4.addProduction('X', "FXL");  // L is the production for flower
+//    pattern4.addProduction('F', "F[-F][+F]");
+//    pattern4.addProduction('L', "/B");
+//    pattern4.addProduction('B', "[G/][(G/)][((G/))][)G/][))G/((]"); // G forward with black color
+//    pattern4.addMeaning('X', 0);
+//    pattern4.addMeaning('B', 0);
+//    pattern4.addMeaning('F', 1, 15, &gore);
+////    pattern4.addMeaning('G', 1, 12, &color3);
+//    pattern4.addMeaning('[', 2);
+//    pattern4.addMeaning(']', 3);
+//    pattern4.addMeaning('^', 4, 90);
+//    pattern4.addMeaning('-', 4, 10);
+//    pattern4.addMeaning('+', 4, -10);
+////    pattern4.addMeaning('T', 5, 6, &col_flower2);
+////    pattern4.addMeaning('/', 5, 6, &color1);
+//    pattern4.addMeaning('(', 4, 72);
+//    pattern4.addMeaning(')', 4, -72);
+//    for (int i = 0; i < 10; i++) {
+//        pattern4.createNewGeneration();
+//        char buf[1000000];
+//        pattern4.getCurrent(buf);
+//        cout << buf << endl;
+//    }
+//    pattern4.interpret();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    OctagonStar octstar(gore, 100,100,canvas,3);
 //    SnowFlake(gore, 100, 100, canvas);
-    TreeA t1(brown, 100, 300, canvas);
-    TreeB t2(brown, 400, 300, canvas);
-    TreeC t3(brown, 700, 300, canvas);
+//    TreeA t1(brown, 100, 300, canvas);
+//    TreeB t2(brown, 400, 300, canvas);
+//    TreeC t3(brown, 700, 300, canvas);
     TreeD t4(brown, pink, 100, 0, canvas, 5);
-    TreeE t5(brown, pink, 400, 0, canvas);
+//    TreeE t5(brown, pink, 400, 0, canvas);
 
 
 
