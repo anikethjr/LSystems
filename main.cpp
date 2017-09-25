@@ -4,7 +4,7 @@
 
 class LongTree {
 public:
-    LongTree(Color &colorBranch, Color &colorFlower, int x, int y, Canvas &canvas, int alignment, int generation = 6) {
+    LongTree(Color &colorBranch, Color &colorFlower, int x, int y, Canvas &canvas, int alignment, int generations = 6) {
         canvas.setOrigin(x, y);
         Interpreter pattern("^[X]", &canvas);
         pattern.addProduction('F', "FF");
@@ -25,7 +25,7 @@ public:
         else
             pattern.addProduction('X', "F+[XP]-F-[XP]+XP");
 
-        for (int i = 0; i < generation; i++) {
+        for (int i = 0; i < generations; i++) {
             pattern.createNewGeneration();
             char buf[1000000];
             pattern.getCurrent(buf);
@@ -37,7 +37,7 @@ public:
 
 class Shrub {
 public:
-    Shrub(Color &colorBranch, int x, int y, Canvas &canvas, int alignment, int generation = 6) {
+    Shrub(Color &colorBranch, int x, int y, Canvas &canvas, int alignment, int generations = 6) {
         canvas.setOrigin(x, y);
         Interpreter pattern("^[X]", &canvas);
         pattern.addProduction('F', "FF");
@@ -55,7 +55,76 @@ public:
         else // symmetrical
             pattern.addProduction('X', "[-FX][+X][+X][-X]+FX");
 
-        for (int i = 0; i < generation; i++) {
+        for (int i = 0; i < generations; i++) {
+            pattern.createNewGeneration();
+            char buf[1000000];
+            pattern.getCurrent(buf);
+        }
+        pattern.interpret();
+        canvas.setOrigin(-x, -y);
+    }
+
+};
+
+class OctagonStar {
+public:
+    OctagonStar(Color &starColor, int x, int y, Canvas &canvas, int generations = 2) {
+        canvas.setOrigin(x, y);
+        Interpreter pattern("^[F+F+F+F+F+F+F+F+F]", &canvas);
+        pattern.addProduction('F', "FF+F+F+F+F+F+F+FF");
+        pattern.addMeaning('F', 1, 5, &starColor);
+        pattern.addMeaning('^', 4, 90);
+        pattern.addMeaning('-', 4, 135);
+        pattern.addMeaning('+', 4, -135);
+        for (int i = 0; i < generations; i++) {
+            pattern.createNewGeneration();
+            char buf[1000000];
+            pattern.getCurrent(buf);
+        }
+        pattern.interpret();
+        canvas.setOrigin(-x, -y);
+    }
+
+};
+
+class SnowFlake {
+public:
+    SnowFlake(Color &snowFlakeColor, int x, int y, Canvas &canvas, int generations = 3) {
+        canvas.setOrigin(x, y);
+        Interpreter pattern("^[F+F+F]", &canvas);
+        pattern.addProduction('F', "F-F+F-F");
+        pattern.addMeaning('F', 1, 4, &snowFlakeColor);
+        pattern.addMeaning('^', 4, 90);
+        pattern.addMeaning('-', 4, 60);
+        pattern.addMeaning('+', 4, -120);
+        for (int i = 0; i < generations; i++) {
+            pattern.createNewGeneration();
+            char buf[1000000];
+            pattern.getCurrent(buf);
+        }
+        pattern.interpret();
+        canvas.setOrigin(-x, -y);
+    }
+};
+
+class TreeA {
+public:
+    TreeA(Color &colorBranch, Color &colorFlower, int x, int y, Canvas &canvas, int alignment, int generations = 5) {
+        canvas.setOrigin(x, y);
+        Interpreter pattern("^[F]", &canvas);
+        pattern.addProduction('F', "[+F]F[-F]F");
+        pattern.addMeaning('F', 1, 5, &colorBranch);
+        pattern.addMeaning('[', 2);
+        pattern.addMeaning(']', 3);
+        pattern.addMeaning('^', 4, 90);
+        pattern.addMeaning('-', 4, 25.7);
+        pattern.addMeaning('+', 4, -25.7);
+        pattern.addMeaning('G', 1, 5, &colorFlower);
+        pattern.addProduction('L', "[(G(G(((G(G][)G)G)))G)G][((G(G(((G(G][))G)G)))G)G]");
+        pattern.addMeaning('(', 4, 45);
+        pattern.addMeaning(')', 4, -45);
+
+        for (int i = 0; i < generations; i++) {
             pattern.createNewGeneration();
             char buf[1000000];
             pattern.getCurrent(buf);
@@ -79,37 +148,37 @@ int main() {
     Color kaala(0, 0, 0);
 
 
-    for (int i = 1; i <= 200; i++)
-        canvas.drawCircle(500, 450, i, gore);
-
-    for (int i = 0; i < 30; i++) {
-        int x = rand() % 400 + 50;
-        int y = rand() % 100 + 0;
-        int randomnum = rand() % 2;
-        int randomnum2 = rand() % 2;
-        if (randomnum == 0)
-            LongTree longTree1(brown, pink, x, y, canvas, randomnum, 6 - randomnum2);
-        else
-            LongTree longTree2(brown, green, x, y, canvas, randomnum, 6 - randomnum2);
-    }
-
-    for (int i = 0; i < 30; i++) {
-        int x = rand() % 400 + 900;
-        int y = rand() % 100 + 0;
-        int randomnum = rand() % 2;
-        int randomnum2 = rand() % 2;
-        if (randomnum == 0)
-            LongTree longTree(brown, pink, x, y, canvas, randomnum, 6 - randomnum2);
-        else
-            LongTree longTree3(brown, green, x, y, canvas, randomnum, 6 - randomnum2);
-    }
-
-    for (int i = 1; i <= 100; i++) {
-        Color gradient(10, 10, 142 * i * 0.01);
-        canvas.drawLine(0, i, 1300, i, gradient);
-    }
-    int x = -10;
-    int y = 0;
+//    for (int i = 1; i <= 200; i++)
+//        canvas.drawCircle(500, 450, i, gore);
+//
+//    for (int i = 0; i < 30; i++) {
+//        int x = rand() % 400 + 50;
+//        int y = rand() % 100 + 0;
+//        int randomnum = rand() % 2;
+//        int randomnum2 = rand() % 2;
+//        if (randomnum == 0)
+//            LongTree longTree1(brown, pink, x, y, canvas, randomnum, 6 - randomnum2);
+//        else
+//            LongTree longTree2(brown, green, x, y, canvas, randomnum, 6 - randomnum2);
+//    }
+//
+//    for (int i = 0; i < 30; i++) {
+//        int x = rand() % 400 + 900;
+//        int y = rand() % 100 + 0;
+//        int randomnum = rand() % 2;
+//        int randomnum2 = rand() % 2;
+//        if (randomnum == 0)
+//            LongTree longTree(brown, pink, x, y, canvas, randomnum, 6 - randomnum2);
+//        else
+//            LongTree longTree3(brown, green, x, y, canvas, randomnum, 6 - randomnum2);
+//    }
+//
+//    for (int i = 1; i <= 100; i++) {
+//        Color gradient(10, 10, 142 * i * 0.01);
+//        canvas.drawLine(0, i, 1300, i, gradient);
+//    }
+//    int x = -10;
+//    int y = 0;
     /*for(int i=0;i<20;i++, x+=4, y+=3)
     {
         //int x = rand()%300 - 30;
@@ -127,8 +196,36 @@ int main() {
         }
     }*/
 
+//    OctagonStar octstar(gore, 100,100,canvas,3);
+    SnowFlake(gore, 100, 100, canvas);
 
-
+// star test
+    canvas.setOrigin(500, 100);
+    Interpreter pattern4("^[F+F+F]", &canvas);
+//    pattern4.addProduction('X', "FXL");  // L is the production for flower
+    pattern4.addProduction('F', "F-F+F-F");
+    pattern4.addProduction('L', "/B");
+    pattern4.addProduction('B', "[G/][(G/)][((G/))][)G/][))G/((]"); // G forward with black color
+    pattern4.addMeaning('X', 0);
+    pattern4.addMeaning('B', 0);
+    pattern4.addMeaning('F', 1, 4, &gore);
+//    pattern4.addMeaning('G', 1, 12, &color3);
+    pattern4.addMeaning('[', 2);
+    pattern4.addMeaning(']', 3);
+    pattern4.addMeaning('^', 4, 90);
+    pattern4.addMeaning('-', 4, 60);
+    pattern4.addMeaning('+', 4, -120);
+//    pattern4.addMeaning('T', 5, 6, &col_flower2);
+//    pattern4.addMeaning('/', 5, 6, &color1);
+    pattern4.addMeaning('(', 4, 72);
+    pattern4.addMeaning(')', 4, -72);
+    for (int i = 0; i < 4; i++) {
+        pattern4.createNewGeneration();
+        char buf[1000000];
+        pattern4.getCurrent(buf);
+        cout << buf << endl;
+    }
+    pattern4.interpret();
 
 
 
