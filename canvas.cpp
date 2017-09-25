@@ -1,4 +1,10 @@
 #include "canvas.h"
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
 #define signum(x) ((x) >= 0 ? 1 : -1)
 #define drawCirclePoint(x, y, c) {\
 drawPoint((x), (y), (c));\
@@ -19,7 +25,6 @@ Canvas::Canvas(int width, int height)
     this->width = width;
     this->background = Color(0, 0, 0);
     this->origin = std::make_pair(0, 0);
-    this->points.reserve(width);
 }
 
 void Canvas::drawLine(int x1, int y1, int x2, int y2, Color c)
@@ -173,8 +178,8 @@ void draw()
     glBegin(GL_POINTS);
     for(auto i : current->points)
     {
-        glColor3f(i.second.getR()/255.0f, i.second.getG()/255.0f, i.second.getB()/255.0f);
-        glVertex2i(i.first.first, i.first.second);
+	glColor3f(i.second.getR()/255.0f, i.second.getG()/255.0f, i.second.getB()/255.0f);
+	glVertex2i(i.first / current->getHeight(), i.first % current->getHeight());
     }
     glEnd();
     glFlush();
@@ -194,4 +199,5 @@ void Canvas::display()
     glutDisplayFunc(draw);
     glutMainLoop();    
 }
+
 
