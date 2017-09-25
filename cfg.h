@@ -25,38 +25,14 @@ class CFG
          * @param symbol Represents the LHS symbol of the production
          * @param rhs Represents the RHS of the production
          */
-        void addProduction(char symbol,char rhs[])
-        {
-            strcpy(productions[symbol],rhs);
-        }
+        void addProduction(char symbol,char rhs[]);
         /**
          * Generates the offspring of the current string by simultaneously replacing all the symbols by the RHS's of their respective rules.
          */
-        void createNewGeneration()
-        {
-            char new_string[1000000];
-            int pos = 0;
-            for (long i = 0;current[i]!='\0'; ++i)
-            {
-                if(productions.find(current[i])!=productions.end())
-                {
-                    for(long j=0;j<strlen(productions[current[i]]);++j)
-                    {
-                        new_string[pos++] = productions[current[i]][j];
-                    }
-                }
-                else
-                    new_string[pos++] = current[i];
-            }
-            new_string[pos] = '\0';
-            strcpy(current,new_string);
-        }
+        void createNewGeneration();
         /**
          * Returns the current generation string
          */
-        void getCurrent(char buffer[])
-        {
-            strcpy(buffer,current);
-        }
+        void getCurrent(char buffer[]);
 };
 #endif //CFG_H
