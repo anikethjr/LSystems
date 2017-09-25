@@ -110,35 +110,18 @@ void Canvas::drawLine(int x1, int y1, int x2, int y2, Color c)
                 }
             }
             vertical ? drawPoint(start_other, start, c) : drawPoint(start, start_other, c);
-            for(int i = start; i < end; i++)
+            for(int i = start + 1; i <= end; i++)
             {
-                if(sign == 1)
+                if(sign * d > 0)
                 {
-                    if(d > 0)
-                    {
-                        start_other++;
-                        d += del2;
-                    }
-                    else
-                    {
-                        d += del1;
-                    }
-                        
+                    start_other += sign;
+                    d += del2;
                 }
                 else
                 {
-                    if(d < 0)
-                    {
-                        start_other--;
-                        d += del2;
-                    }
-                    else
-                    {
-                        d += del1;
-                    }
+                    d += del1;
                 }
-                start++;
-                vertical ? drawPoint(start_other, start, c) : drawPoint(start, start_other, c);
+                vertical ? drawPoint(start_other, i, c) : drawPoint(i, start_other, c);
             }           
         }
     }
