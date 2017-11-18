@@ -20,7 +20,7 @@ class CFG
         {
             strcpy(current,axiom);
         }
-        /*
+        /**
          * Function to add a production to the grammar
          * @param symbol Represents the LHS symbol of the production
          * @param rhs Represents the RHS of the production

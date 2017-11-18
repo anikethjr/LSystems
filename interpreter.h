@@ -42,7 +42,7 @@ public:
      * Interprets the current string of the series and produces an interpretation i.e. image of it.
      */
     void interpret();
-    /*
+    /**
      * Function to add a production to the grammar. Wrapper for the function provided by the CFG class
      * @param symbol Represents the LHS symbol of the production
      * @param rhs Represents the RHS of the production
@@ -50,7 +50,7 @@ public:
     inline void addProduction(char symbol, char rhs[]) {
         grammar.addProduction(symbol, rhs);
     }
-    /*
+    /**
      * Creates next generation string. Wrapper for the function provided by the CFG class.
      */
     inline void createNewGeneration() {
